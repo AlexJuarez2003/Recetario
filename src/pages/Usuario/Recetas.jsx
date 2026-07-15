@@ -1,11 +1,10 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { getRecetas } from "../../helpers/recetas";
-import { UserContext } from "../../context/UserProvider";
+import Loading from "../../components/Loading";
 
 const Recetas = () => {
 
     const [recetas, setRecetas] = useState([]);
-    const { user } = useContext(UserContext);
 
     const obtenerRecetas = async () => {
         try {
@@ -20,7 +19,6 @@ const Recetas = () => {
 
     useEffect(() => {
         obtenerRecetas();
-        // console.log(user);
     }, []);
 
     return (
@@ -31,7 +29,9 @@ const Recetas = () => {
                 </div>
                 <div className="w-full">
                     {
-                        recetas.map(receta => (
+                        recetas.length === 0
+                        ? <Loading message="Cargando recetas" />
+                        : recetas.map(receta => (
                             <div key={receta.id} className="bg-white rounded flex flex-col mb-4">
                                 {/* Título */}
                                 <div className="flex justify-between p-2">

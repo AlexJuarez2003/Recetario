@@ -1,6 +1,8 @@
-const updatePerfil = async ( setUser, token ) => {
+const updatePerfil = async ( setUser ) => {
 
   try {
+    const token = localStorage.getItem("token");
+
     const response = await fetch(`${import.meta.env.VITE_API_URL}/api/me`, {
       method: "GET",
       headers: {
@@ -16,7 +18,7 @@ const updatePerfil = async ( setUser, token ) => {
     const data = await response.json();
     setUser(data);
   } catch (error) {
-    console.log(error);
+    return error;
   }
 };
 

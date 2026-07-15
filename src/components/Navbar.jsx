@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import Logout from "./Logout";
 
 const Navbar = () => {
 
@@ -16,10 +17,9 @@ const Navbar = () => {
                 <input type="search" ref={search} className="h-9 w-60 p-3 border rounded-2xl"></input>
                 <button className="cursor-pointer hover:bg-gray-200 p-1 rounded">Buscar</button>
             </label>
-            <nav className="flex flex-row gap-6">
-                <button className="cursor-pointer hover:bg-gray-200 p-1 rounded">Recetas</button>
-                <button className="cursor-pointer hover:bg-gray-200 p-1 rounded">Favoritos</button>
-                <button className="cursor-pointer hover:bg-gray-200 p-1 rounded">Perfil / Login  Signup</button>
+            <nav className="flex flex-row gap-10">
+                <p className="flex  font-semibold items-center">Administrador</p>
+                <Logout estilo={"cursor-pointer bg-red-500 text-white hover:bg-gray-400 p-3 rounded"} />
             </nav>
         </div>
     );

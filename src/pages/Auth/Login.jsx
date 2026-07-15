@@ -1,12 +1,9 @@
-import { useState, useContext, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { UserContext } from "../../context/UserProvider";
 
 const Login = () => {
-
     const navigate = useNavigate();
     const input = useRef(null);
-    const { setUser } = useContext(UserContext);
     const [formData, setFormData] = useState({
         email: "",
         password: ""
@@ -39,10 +36,12 @@ const Login = () => {
 
             const data = await response.json();
 
-            setUser(data.user);
-            localStorage.setItem("token", data.token);
-
-            navigate('/perfil');
+            if (data?.user?.role === "admin") {
+                localStorage.setItem("token", data.token);
+                navigate('/dashboard');
+            } else {
+                alert("Usuario sin permisos");
+            }
         } catch (error) {
             console.log(error);
         }

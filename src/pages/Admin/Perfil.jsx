@@ -1,30 +1,18 @@
-import React, { useContext, useEffect} from 'react';
-import { UserContext } from '../../context/UserProvider';
+import React, { useEffect, useState } from 'react';
 import updatePerfil from "../../helpers/me.js";
-import Logout from '../Auth/Logout.jsx';
-import { useNavigate } from 'react-router-dom';
+import Logout from '../../components/Logout.jsx';
+import Loading from '../../components/Loading.jsx';
 
 const Perfil = () => {
 
-    const styles = {
-        
-    }
-
-    const { user, setUser } = useContext(UserContext);
-    const navigate = useNavigate();
+    const [user, setUser] = useState(null);
 
     useEffect(() => {
-        const token = localStorage.getItem("token");
-
-        if (!token) {
-            return navigate("/login");
-        }
-
-        updatePerfil(setUser, token);
+        updatePerfil(setUser);
     }, []);
 
     if (!user) {
-        return <h2>Cargando...</h2>
+        return <Loading message='Cargando perfil' />
     }
 
     return (<>

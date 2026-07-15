@@ -1,6 +1,5 @@
-import { useEffect, useState, useRef, useContext } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { UserContext } from "../../context/UserProvider";
 
 const Signup = () => {
 
@@ -21,17 +20,13 @@ const Signup = () => {
 
   const input = useRef(null);
 
-  // const [user, setUser] = useState(null);
-
   const navigate = useNavigate();
-
-  const { setUser } = useContext(UserContext);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/register", {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -44,10 +39,9 @@ const Signup = () => {
       }
 
       const data = await response.json();
-      setUser(data.user);
       localStorage.setItem("token", data.token);
 
-      navigate('/perfil');
+      navigate('/dashboard');
     } catch (error) {
       console.log(error);
     }

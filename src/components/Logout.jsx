@@ -1,10 +1,7 @@
 import { useNavigate } from "react-router-dom";
-import { UserContext } from "../../context/UserProvider";
-import { useContext } from "react";
 
-const Logout = () => {
+const Logout = ({ estilo}) => {
     const navigate = useNavigate();
-    const { setUser } = useContext(UserContext);
 
     const handleLogout = async () => {
         try {
@@ -23,16 +20,15 @@ const Logout = () => {
             }
 
             localStorage.removeItem("token");
-            setUser(null);
-
-            navigate('/login');
+            
+            navigate('/');
         } catch (error) {
             console.log(error);
         }
     }
 
     return (
-        <button onClick={handleLogout} className="w-60 rounded-2xl p-1 cursor-pointer bg-red-500 text-white">Cerrar sesión</button>
+        <button onClick={handleLogout} className={estilo ? estilo : "w-60 rounded-2xl p-1 cursor-pointer bg-red-500 text-white"}>Cerrar sesión</button>
     );
 }
 
