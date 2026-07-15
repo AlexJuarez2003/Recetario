@@ -33,11 +33,6 @@ const Sidebar = () => {
                     </NavLink>
                 </li>
                 <li>
-                    <NavLink to="/favoritos" className={linkClass}>
-                        Favoritos
-                    </NavLink>
-                </li>
-                <li>
                     <NavLink to="/usuarios" className={linkClass}>
                         Usuarios
                     </NavLink>

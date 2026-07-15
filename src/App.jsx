@@ -5,7 +5,6 @@ import Signup from "./pages/Auth/Signup";
 import Login from "./pages/Auth/Login";
 import Layout from "./pages/Layout";
 import Recetas from "./pages/Usuario/Recetas";
-import Favoritos from "./pages/Usuario/Favoritos";
 import Categorias from "./pages/Admin/Categorias";
 import Usuarios from "./pages/Admin/Usuarios";
 import Dashboard from "./pages/Admin/Dashboard";
@@ -29,7 +28,6 @@ const App = () => {
               <Route path="/usuarios" element={<Usuarios />} />
               <Route path="/categorias" element={<Categorias />} />
               <Route path="/recetas" element={<Recetas />} />
-              <Route path="/favoritos" element={<Favoritos />} />
               <Route path="/perfil" element={<Perfil />} />
             </Route>
             <Route path="*" element={<h1>404 - Página no encontrada</h1>} />
