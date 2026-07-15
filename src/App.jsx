@@ -1,9 +1,10 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import Perfil from "./pages/Admin/Perfil";
-import Signup from "./pages/Auth/Signup";
-import Login from "./pages/Auth/Login";
+import AuthPage from "./pages/Auth/AuthPage";
 import Layout from "./pages/Layout";
+import Home from "./pages/Publico/Home";
+import DetalleReceta from "./pages/Publico/DetalleReceta";
 import Recetas from "./pages/Usuario/Recetas";
 import Categorias from "./pages/Admin/Categorias";
 import Usuarios from "./pages/Admin/Usuarios";
@@ -17,21 +18,29 @@ const App = () => {
     <UserProvider>
       <BrowserRouter>
         <Routes>
-          {/* Públicas */}
-          <Route path="/" element={<Login />} />
-          {/* <Route path="/signup" element={<Signup />} /> */}
+          {/* Pública */}
+          <Route path="/" element={<Home />} />
+          <Route path="/auth" element={<AuthPage />} />
+          <Route path="/recetas/:id" element={<DetalleReceta />} />
 
-          {/* Privadas */}
-          <Route element={ <ProtectedRoute allowedRoles={[ "admin" ]} /> }>
+          {/* Privadas: cualquier usuario autenticado (usuario o admin) */}
+          <Route element={<ProtectedRoute allowedRoles={["usuario", "admin"]} />}>
+            <Route element={<Layout />}>
+              <Route path="/recetas" element={<Recetas />} />
+            </Route>
+          </Route>
+
+          {/* Privadas: solo admin */}
+          <Route element={<ProtectedRoute allowedRoles={["admin"]} />}>
             <Route element={<Layout />}>
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/usuarios" element={<Usuarios />} />
               <Route path="/categorias" element={<Categorias />} />
-              <Route path="/recetas" element={<Recetas />} />
               <Route path="/perfil" element={<Perfil />} />
             </Route>
-            <Route path="*" element={<h1>404 - Página no encontrada</h1>} />
           </Route>
+
+          <Route path="*" element={<h1>404 - Página no encontrada</h1>} />
         </Routes>
       </BrowserRouter>
     </UserProvider>

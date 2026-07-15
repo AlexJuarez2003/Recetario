@@ -1,7 +1,7 @@
 export const getUsuarios = async () => {
     try {
         const token = localStorage.getItem("token");
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/usuarios`,{
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/usuarios`, {
             method: 'GET',
             headers: {
                 Authorization: `Bearer ${token}`,
@@ -10,11 +10,7 @@ export const getUsuarios = async () => {
         });
 
         const data = await response.json();
-
-        if (!response.ok) {
-            throw new Error("Error al traer lista de usuarios: ", data.message);
-        }
-
+        if (!response.ok) throw new Error(data.message || "Error al traer usuarios");
         return data;
     } catch (error) {
         console.log(error);
@@ -24,28 +20,17 @@ export const getUsuarios = async () => {
 export const createUser = async (name, email, password, role) => {
     try {
         const token = localStorage.getItem("token");
-
         const response = await fetch(`${import.meta.env.VITE_API_URL}/api/usuarios`, {
             method: 'POST',
             headers: {
                 Authorization: `Bearer ${token}`,
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({
-                name: name,
-                email: email,
-                password: password,
-                role: role
-            })
+            body: JSON.stringify({ name, email, password, role })
         });
 
-        if (!response.ok) {
-            const error = await response.json();
-            console.log(error);
-            throw new Error(error.message);
-        }
-
         const data = await response.json();
+        if (!response.ok) throw new Error(data.message || "Error al crear usuario");
         return data;
     } catch (error) {
         console.log(error);
@@ -55,7 +40,6 @@ export const createUser = async (name, email, password, role) => {
 export const deleteUser = async (id) => {
     try {
         const token = localStorage.getItem("token");
-
         const response = await fetch(`${import.meta.env.VITE_API_URL}/api/usuarios/${id}`, {
             method: 'DELETE',
             headers: {
@@ -64,17 +48,12 @@ export const deleteUser = async (id) => {
             }
         });
 
-        if (!response.ok) {
-            const error = await response.json();
-            throw new Error("Error al borrar usuario: ", error.message);
-        }
-
         const data = await response.json();
-
+        if (!response.ok) throw new Error(data.message || "Error al borrar usuario");
         return data;
     } catch (error) {
         console.log(error);
     }
 }
 
-export default { getUsuarios, createUser };
+export default { getUsuarios, createUser, deleteUser };
