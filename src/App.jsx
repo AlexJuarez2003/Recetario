@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-import Perfil from "./pages/Admin/Perfil";
+import Perfil from "./pages/Usuario/Perfil";
 import AuthPage from "./pages/Auth/AuthPage";
 import Layout from "./pages/Layout";
 import Home from "./pages/Publico/Home";
@@ -27,6 +27,7 @@ const App = () => {
           <Route element={<ProtectedRoute allowedRoles={["usuario", "admin"]} />}>
             <Route element={<Layout />}>
               <Route path="/recetas" element={<Recetas />} />
+              <Route path="/perfil" element={<Perfil />} />
             </Route>
           </Route>
 
@@ -36,7 +37,6 @@ const App = () => {
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/usuarios" element={<Usuarios />} />
               <Route path="/categorias" element={<Categorias />} />
-              <Route path="/perfil" element={<Perfil />} />
             </Route>
           </Route>
 

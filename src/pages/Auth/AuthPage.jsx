@@ -1,10 +1,11 @@
-import { useState, useContext } from "react";
-import { useNavigate } from "react-router-dom";
+import { useContext, useEffect, useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { UserContext } from "../../context/UserProvider.jsx";
 import "./AuthPage.css";
 
 const AuthPage = () => {
-    const [panelActivo, setPanelActivo] = useState(false);
+    const [searchParams] = useSearchParams();
+    const [panelActivo, setPanelActivo] = useState(searchParams.get("modo") === "registro");
     const [cargando, setCargando] = useState(false);
 
     const [loginData, setLoginData] = useState({ email: "", password: "" });
@@ -12,6 +13,10 @@ const AuthPage = () => {
 
     const { setUser } = useContext(UserContext);
     const navigate = useNavigate();
+
+    useEffect(() => {
+        setPanelActivo(searchParams.get("modo") === "registro");
+    }, [searchParams]);
 
     const handleLogin = async (e) => {
         e.preventDefault();

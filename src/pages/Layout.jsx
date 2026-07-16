@@ -1,26 +1,21 @@
 import Sidebar from "../components/Sidebar";
 import Navbar from "../components/Navbar";
 import { Outlet } from "react-router-dom";
+import "./Layout.css";
 
 const Layout = () => {
 
     return (
-        <div className="flex flex-col h-screen">
-            
-            <div className="h-15 bg-gray-200">
-                <Navbar className="shrink-0" />
-            </div>
-            
-            <div className="flex flex-1 overflow-hidden">
+        <div className="app-shell">
+            <Navbar />
 
-                <Sidebar className="shrink-0" />
+            <div className="app-shell-body">
+                <Sidebar />
 
-                <main className="flex-1 p-4 overflow-y-auto">
+                <main className="app-shell-main">
                     <Outlet />
                 </main>
-
             </div>
-
         </div>
     );
 }
