@@ -1,5 +1,5 @@
 import { useContext, useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import Loading from "../../components/Loading";
 import { UserContext } from "../../context/UserProvider";
 import { getCategorias } from "../../helpers/categorias";
@@ -38,17 +38,19 @@ const obtenerIniciales = (nombre = "Usuario") =>
         .toUpperCase();
 
 const Home = () => {
-    const { user, setUser } = useContext(UserContext);
+    const { user, loading: userLoading } = useContext(UserContext);
     const [todasLasRecetas, setTodasLasRecetas] = useState([]);
     const [recetasAleatorias, setRecetasAleatorias] = useState([]);
     const [categorias, setCategorias] = useState([]);
     const [busqueda, setBusqueda] = useState("");
     const [categoriaActiva, setCategoriaActiva] = useState("");
-    const [menuUsuarioAbierto, setMenuUsuarioAbierto] = useState(false);
+    const [modalSesion, setModalSesion] = useState(false);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
     useEffect(() => {
+        if (userLoading || user) return;
+
         const cargarDatos = async () => {
             const [recetasData, categoriasData] = await Promise.all([
                 getRecetas(),
@@ -68,7 +70,7 @@ const Home = () => {
         };
 
         cargarDatos();
-    }, []);
+    }, [user, userLoading]);
 
     const categoriasParaMostrar = categorias.length
         ? categorias.slice(0, 8).map((categoria) => ({
@@ -101,27 +103,17 @@ const Home = () => {
         todasLasRecetas.map((receta) => receta.categoria?.nombre).filter(Boolean)
     ).size;
 
-    const cerrarSesion = async () => {
-        try {
-            const token = localStorage.getItem("token");
+    if (userLoading) {
+        return (
+            <div className="home-loading">
+                <Loading message="Revisando sesion" />
+            </div>
+        );
+    }
 
-            if (token) {
-                await fetch(`${import.meta.env.VITE_API_URL}/api/logout`, {
-                    method: "POST",
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        "Content-Type": "application/json",
-                    },
-                });
-            }
-        } catch (errorLogout) {
-            console.log(errorLogout);
-        } finally {
-            localStorage.removeItem("token");
-            setUser(null);
-            setMenuUsuarioAbierto(false);
-        }
-    };
+    if (user) {
+        return <Navigate to={user.role === "admin" ? "/dashboard" : "/recetas"} replace />;
+    }
 
     if (loading) {
         return (
@@ -150,40 +142,14 @@ const Home = () => {
                     </nav>
 
                     <div className="home-session">
-                        {user ? (
-                            <div className="home-user-menu">
-                                <button
-                                    type="button"
-                                    className="home-user-button"
-                                    onClick={() => setMenuUsuarioAbierto((abierto) => !abierto)}
-                                >
-                                    <span className="home-user-avatar">{obtenerIniciales(user.name)}</span>
-                                    <span className="home-user-name">{user.name}</span>
-                                    <span className="home-user-arrow">v</span>
-                                </button>
-
-                                {menuUsuarioAbierto && (
-                                    <div className="home-user-dropdown">
-                                        <Link to="/perfil">Ver cuenta</Link>
-                                        <Link to={user.role === "admin" ? "/dashboard" : "/recetas"}>
-                                            Ir al panel
-                                        </Link>
-                                        <button type="button" onClick={cerrarSesion}>
-                                            Cerrar sesion
-                                        </button>
-                                    </div>
-                                )}
-                            </div>
-                        ) : (
-                            <div className="home-auth-actions">
-                                <Link className="home-login-link" to="/auth?modo=login">
-                                    Iniciar sesion
-                                </Link>
-                                <Link className="home-register-link" to="/auth?modo=registro">
-                                    Crear cuenta
-                                </Link>
-                            </div>
-                        )}
+                        <div className="home-auth-actions">
+                            <Link className="home-login-link" to="/auth?modo=login">
+                                Iniciar sesion
+                            </Link>
+                            <Link className="home-register-link" to="/auth?modo=registro">
+                                Crear cuenta
+                            </Link>
+                        </div>
                     </div>
                 </div>
             </header>
@@ -202,7 +168,7 @@ const Home = () => {
 
                                 <div className="home-hero-actions">
                                     <a href="#recetas">Ver recetas</a>
-                                    {!user && <Link to="/auth?modo=registro">Crear cuenta</Link>}
+                                    <Link to="/auth?modo=registro">Crear cuenta</Link>
                                 </div>
                             </div>
 
@@ -299,7 +265,7 @@ const Home = () => {
                                     descripcion o categoria.
                                 </p>
                                 <div className="home-empty-actions">
-                                    <Link to={user ? "/recetas" : "/auth?modo=login"}>
+                                    <Link to="/auth?modo=login">
                                         Entrar al sistema
                                     </Link>
                                     <a href="#categorias">Ver categorias</a>
@@ -312,7 +278,12 @@ const Home = () => {
                     {!error && recetasAMostrar.length > 0 && (
                         <div className="home-recipes-grid">
                             {recetasAMostrar.map((receta) => (
-                                <Link key={receta.id} to={`/recetas/${receta.id}`} className="home-recipe-card">
+                                <button
+                                    key={receta.id}
+                                    type="button"
+                                    className="home-recipe-card"
+                                    onClick={() => setModalSesion(true)}
+                                >
                                     <div className="home-recipe-image">
                                         {receta.imagen ? (
                                             <img src={receta.imagen} alt={receta.titulo} />
@@ -330,7 +301,7 @@ const Home = () => {
                                             <strong>Ver receta</strong>
                                         </div>
                                     </div>
-                                </Link>
+                                </button>
                             ))}
                         </div>
                     )}
@@ -347,11 +318,36 @@ const Home = () => {
                     </div>
                     <div className="home-quick-links">
                         <p>Acceso rapido</p>
-                        <Link to={user ? "/recetas" : "/auth?modo=login"}>Panel de recetas</Link>
-                        {user?.role === "admin" && <Link to="/dashboard">Dashboard admin</Link>}
+                        <Link to="/auth?modo=login">Panel de recetas</Link>
+                        <Link to="/auth?modo=registro">Crear cuenta</Link>
                     </div>
                 </section>
             </main>
+
+            {modalSesion && (
+                <div className="home-auth-modal-overlay" onClick={() => setModalSesion(false)}>
+                    <section className="home-auth-modal" onClick={(e) => e.stopPropagation()}>
+                        <button
+                            type="button"
+                            className="home-auth-modal-close"
+                            onClick={() => setModalSesion(false)}
+                            aria-label="Cerrar"
+                        >
+                            ×
+                        </button>
+                        <span>Contenido protegido</span>
+                        <h2>Inicia sesion para ver esta receta</h2>
+                        <p>
+                            Las recetas completas, favoritos, comentarios y tu panel personal
+                            estan disponibles cuando entras con tu cuenta de ChefIA.
+                        </p>
+                        <div>
+                            <Link to="/auth?modo=login">Iniciar sesion</Link>
+                            <Link to="/auth?modo=registro">Crear cuenta</Link>
+                        </div>
+                    </section>
+                </div>
+            )}
         </div>
     );
 };

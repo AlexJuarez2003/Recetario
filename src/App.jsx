@@ -4,7 +4,7 @@ import Perfil from "./pages/Usuario/Perfil";
 import AuthPage from "./pages/Auth/AuthPage";
 import Layout from "./pages/Layout";
 import Home from "./pages/Publico/Home";
-import DetalleReceta from "./pages/Publico/DetalleReceta";
+import DetalleReceta from "./pages/Usuario/DetalleReceta";
 import Recetas from "./pages/Usuario/Recetas";
 import Categorias from "./pages/Admin/Categorias";
 import Usuarios from "./pages/Admin/Usuarios";
@@ -21,12 +21,12 @@ const App = () => {
           {/* Pública */}
           <Route path="/" element={<Home />} />
           <Route path="/auth" element={<AuthPage />} />
-          <Route path="/recetas/:id" element={<DetalleReceta />} />
 
           {/* Privadas: cualquier usuario autenticado (usuario o admin) */}
           <Route element={<ProtectedRoute allowedRoles={["usuario", "admin"]} />}>
             <Route element={<Layout />}>
               <Route path="/recetas" element={<Recetas />} />
+              <Route path="/recetas/:id" element={<DetalleReceta />} />
               <Route path="/perfil" element={<Perfil />} />
             </Route>
           </Route>

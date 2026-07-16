@@ -292,12 +292,13 @@
 
 .receta-actions {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(3, 1fr);
     gap: 8px;
     padding: 8px;
 }
 
-.receta-actions button {
+.receta-actions button,
+.receta-detail-link {
     min-height: 44px;
     display: inline-flex;
     align-items: center;
@@ -309,11 +310,13 @@
     color: #62584c;
     font-size: 15px;
     font-weight: 950;
+    text-decoration: none;
     cursor: pointer;
     transition: background 0.18s ease, color 0.18s ease;
 }
 
-.receta-actions button:hover {
+.receta-actions button:hover,
+.receta-detail-link:hover {
     background: #f5efe7;
 }
 
@@ -321,8 +324,13 @@
     color: #c93636;
 }
 
-.receta-actions button span {
+.receta-actions button span,
+.receta-detail-link span {
     font-size: 20px;
+}
+
+.receta-detail-link {
+    color: #547018;
 }
 
 .recetas-empty {

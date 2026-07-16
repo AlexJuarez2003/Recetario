@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { Navigate, useNavigate, useSearchParams } from "react-router-dom";
 import { UserContext } from "../../context/UserProvider.jsx";
 import "./AuthPage.css";
 
@@ -11,7 +11,7 @@ const AuthPage = () => {
     const [loginData, setLoginData] = useState({ email: "", password: "" });
     const [registroData, setRegistroData] = useState({ name: "", email: "", password: "" });
 
-    const { setUser } = useContext(UserContext);
+    const { user, setUser } = useContext(UserContext);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -37,7 +37,7 @@ const AuthPage = () => {
 
             localStorage.setItem("token", data.token);
             setUser(data.user);
-            navigate("/");
+            navigate(data.user.role === "admin" ? "/dashboard" : "/recetas", { replace: true });
         } catch (error) {
             alert("Error al iniciar sesión");
             console.log(error);
@@ -71,7 +71,7 @@ const AuthPage = () => {
 
             localStorage.setItem("token", data.token);
             setUser(data.user);
-            navigate("/");
+            navigate("/recetas", { replace: true });
         } catch (error) {
             alert("Error al registrarse");
             console.log(error);
@@ -79,6 +79,10 @@ const AuthPage = () => {
             setCargando(false);
         }
     };
+
+    if (user) {
+        return <Navigate to={user.role === "admin" ? "/dashboard" : "/recetas"} replace />;
+    }
 
     return (
         <div className="auth-body">

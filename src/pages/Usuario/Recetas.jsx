@@ -1,4 +1,5 @@
 import { useContext, useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import Comentarios from "../../components/Comentarios";
 import Loading from "../../components/Loading";
 import { UserContext } from "../../context/UserProvider";
@@ -258,6 +259,10 @@ const Recetas = () => {
                                             <span>◐</span>
                                             Comentar
                                         </button>
+                                        <Link className="receta-detail-link" to={`/recetas/${receta.id}`}>
+                                            <span>↗</span>
+                                            Ver detalle
+                                        </Link>
                                     </footer>
                                 </article>
                             );
