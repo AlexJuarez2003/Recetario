@@ -1,35 +1,39 @@
+import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import { UserContext } from "../context/UserProvider";
 
-const Logout = ({ estilo}) => {
+const Logout = ({ estilo }) => {
     const navigate = useNavigate();
+    const { setUser } = useContext(UserContext);
 
-    const handleLogout = async () => {
-        try {
-            const token = localStorage.getItem("token");
+    const handleLogout = () => {
+        const token = localStorage.getItem("token");
 
-            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/logout`, {
-                method: 'POST',
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                }
-            });
+        localStorage.removeItem("token");
+        setUser(null);
+        navigate("/", { replace: true });
 
-            if (!response.ok) {
-                throw new Error("Error al cerrar sesión");
-            }
+        if (!token) return;
 
-            localStorage.removeItem("token");
-            
-            navigate('/');
-        } catch (error) {
+        fetch(`${import.meta.env.VITE_API_URL}/api/logout`, {
+            method: "POST",
+            headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json",
+            },
+        }).catch((error) => {
             console.log(error);
-        }
-    }
+        });
+    };
 
     return (
-        <button onClick={handleLogout} className={estilo ? estilo : "w-60 rounded-2xl p-1 cursor-pointer bg-red-500 text-white"}>Cerrar sesión</button>
+        <button
+            onClick={handleLogout}
+            className={estilo ? estilo : "w-60 rounded-2xl p-1 cursor-pointer bg-red-500 text-white"}
+        >
+            Cerrar sesion
+        </button>
     );
-}
+};
 
 export default Logout;
