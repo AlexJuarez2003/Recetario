@@ -1,0 +1,266 @@
+.comentarios-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 80;
+    display: grid;
+    place-items: center;
+    background: rgba(31, 27, 22, 0.62);
+    padding: 20px;
+}
+
+.comentarios-modal {
+    width: min(880px, 100%);
+    max-height: min(92vh, 920px);
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    overflow: hidden;
+    border: 1px solid #e3d8ca;
+    border-radius: 18px;
+    background: #fff;
+    color: #221b15;
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.28);
+    font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.comentarios-header {
+    min-height: 70px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    border-bottom: 1px solid #eadfd0;
+    padding: 0 18px 0 24px;
+}
+
+.comentarios-header h2 {
+    margin: 0;
+    text-align: center;
+    color: #221b15;
+    font-size: 24px;
+    font-weight: 950;
+}
+
+.comentarios-header button {
+    width: 42px;
+    height: 42px;
+    border: 0;
+    border-radius: 999px;
+    background: #f1ece5;
+    color: #2f271f;
+    font-size: 30px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.comentarios-content {
+    min-height: 0;
+    overflow-y: auto;
+    background: #fbf7f0;
+}
+
+.comentarios-recipe {
+    background: #fff;
+}
+
+.comentarios-recipe img {
+    width: 100%;
+    max-height: 470px;
+    display: block;
+    object-fit: cover;
+    background: #dbe5ee;
+}
+
+.comentarios-recipe-body {
+    padding: 18px 24px;
+}
+
+.comentarios-author {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.comentarios-author > span,
+.comentario-item > span,
+.comentarios-form > span {
+    width: 42px;
+    height: 42px;
+    display: grid;
+    flex: 0 0 auto;
+    place-items: center;
+    border-radius: 999px;
+    background: #6c8b2f;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 950;
+}
+
+.comentarios-author strong {
+    display: block;
+    color: #221b15;
+    font-size: 16px;
+    font-weight: 950;
+}
+
+.comentarios-author small {
+    color: #756a5d;
+    font-size: 13px;
+    font-weight: 750;
+}
+
+.comentarios-recipe h3 {
+    margin: 16px 0 0;
+    color: #221b15;
+    font-size: 28px;
+    line-height: 1.12;
+    font-weight: 950;
+}
+
+.comentarios-recipe p {
+    margin: 8px 0 0;
+    color: #5f5549;
+    font-size: 15px;
+    line-height: 1.6;
+    font-weight: 750;
+}
+
+.comentarios-list {
+    display: grid;
+    gap: 14px;
+    padding: 18px 24px 22px;
+}
+
+.comentarios-sort {
+    color: #756a5d;
+    font-size: 14px;
+    font-weight: 950;
+}
+
+.comentarios-empty {
+    border: 1px dashed #d8ccbd;
+    border-radius: 14px;
+    background: #fff;
+    color: #756a5d;
+    padding: 18px;
+    font-weight: 800;
+}
+
+.comentario-item {
+    display: grid;
+    grid-template-columns: 42px minmax(0, 1fr);
+    gap: 10px;
+}
+
+.comentario-bubble {
+    display: inline-block;
+    max-width: 100%;
+    border-radius: 18px;
+    background: #fff;
+    padding: 11px 14px;
+    box-shadow: 0 6px 16px rgba(47, 35, 23, 0.06);
+}
+
+.comentario-bubble strong {
+    display: block;
+    color: #221b15;
+    font-size: 14px;
+    font-weight: 950;
+}
+
+.comentario-bubble p {
+    margin: 4px 0 0;
+    color: #332b23;
+    line-height: 1.45;
+    font-weight: 650;
+}
+
+.comentario-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 5px;
+    padding-left: 12px;
+}
+
+.comentario-actions small,
+.comentario-actions button {
+    color: #756a5d;
+    font-size: 12px;
+    font-weight: 900;
+}
+
+.comentario-actions button {
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+}
+
+.comentario-actions button:hover {
+    color: #a92f2f;
+}
+
+.comentarios-form {
+    display: grid;
+    grid-template-columns: 42px 1fr auto;
+    gap: 10px;
+    align-items: center;
+    border-top: 1px solid #eadfd0;
+    background: #fff;
+    padding: 14px 18px;
+}
+
+.comentarios-form input {
+    min-height: 48px;
+    border: 0;
+    border-radius: 999px;
+    background: #f1ece5;
+    color: #221b15;
+    padding: 0 16px;
+    font-size: 15px;
+    font-weight: 700;
+    outline: none;
+}
+
+.comentarios-form input:focus {
+    box-shadow: 0 0 0 3px rgba(125, 157, 53, 0.16);
+}
+
+.comentarios-form button {
+    min-height: 44px;
+    border: 0;
+    border-radius: 999px;
+    background: #1f1b16;
+    color: #fff;
+    padding: 0 16px;
+    font-size: 14px;
+    font-weight: 950;
+    cursor: pointer;
+}
+
+.comentarios-form button:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+@media (max-width: 640px) {
+    .comentarios-overlay {
+        padding: 8px;
+    }
+
+    .comentarios-modal {
+        max-height: 96vh;
+        border-radius: 14px;
+    }
+
+    .comentarios-header h2 {
+        font-size: 18px;
+        text-align: left;
+    }
+
+    .comentarios-form {
+        grid-template-columns: 42px 1fr;
+    }
+
+    .comentarios-form button {
+        grid-column: 2;
+    }
+}

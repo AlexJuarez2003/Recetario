@@ -1,8 +1,12 @@
 export const getFavoritos = async () => {
     try {
+        const token = localStorage.getItem("token");
         const response = await fetch(`${import.meta.env.VITE_API_URL}/api/favoritos`, {
             method: 'GET',
-            headers: { 'Content-Type': 'application/json' }
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
         });
 
         const data = await response.json();

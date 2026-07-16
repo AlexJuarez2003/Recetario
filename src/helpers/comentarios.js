@@ -1,4 +1,4 @@
-export const getComentarios = async (id) => {
+export const getComentarios = async (id = null) => {
     try {
         const response = await fetch(`${import.meta.env.VITE_API_URL}/api/comentarios`, {
             method: 'GET',
@@ -11,6 +11,10 @@ export const getComentarios = async (id) => {
 
         if (!response.ok) {
             throw new Error(`Error al traer los comentarios: ${data.message}`);
+        }
+
+        if (id === null || id === undefined) {
+            return data;
         }
 
         return data.filter((comentario) => comentario.receta_id === Number(id));
