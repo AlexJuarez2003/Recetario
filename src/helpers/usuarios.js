@@ -14,6 +14,7 @@ export const getUsuarios = async () => {
         return data;
     } catch (error) {
         console.log(error);
+        throw error;
     }
 }
 
@@ -34,6 +35,28 @@ export const createUser = async (name, email, password, role) => {
         return data;
     } catch (error) {
         console.log(error);
+        throw error;
+    }
+}
+
+export const updateUser = async (id, payload) => {
+    try {
+        const token = localStorage.getItem("token");
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/usuarios/${id}`, {
+            method: 'PUT',
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        });
+
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.message || "Error al actualizar usuario");
+        return data;
+    } catch (error) {
+        console.log(error);
+        throw error;
     }
 }
 
@@ -53,7 +76,8 @@ export const deleteUser = async (id) => {
         return data;
     } catch (error) {
         console.log(error);
+        throw error;
     }
 }
 
-export default { getUsuarios, createUser, deleteUser };
+export default { getUsuarios, createUser, updateUser, deleteUser };

@@ -1,218 +1,219 @@
-import { useEffect, useOptimistic, useState, useTransition } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
-  getCategorias,
-  createCategoria,
-  updateCategoria,
-  deleteCategoria
+    createCategoria,
+    deleteCategoria,
+    getCategorias,
+    updateCategoria,
 } from "../../helpers/categorias.js";
 import FormCategoria from "../../components/FormCategoria.jsx";
 import Loading from "../../components/Loading.jsx";
+import "./Categorias.css";
+
+const formatDate = (date) => {
+    if (!date) return "--";
+
+    return new Date(date).toLocaleDateString("es-MX", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+    });
+};
 
 const Categorias = () => {
-  const [categorias, setCategorias] = useState([]);
-  const [isPending, startTransition] = useTransition();
-  const [modal, setModal] = useState({ open: false, mode: null, data: null });
+    const [categorias, setCategorias] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [saving, setSaving] = useState(false);
+    const [error, setError] = useState("");
+    const [modal, setModal] = useState({ open: false, data: null });
 
-  const [categoriasOptimistas, dispatchOptimista] = useOptimistic(
-    categorias,
-    (state, action) => {
-      switch (action.type) {
-        case "add":
-          return [...state, action.categoria];
+    const resumen = useMemo(() => {
+        const recientes = categorias.filter((categoria) => {
+            if (!categoria.created_at) return false;
+            const created = new Date(categoria.created_at).getTime();
+            const sevenDays = 7 * 24 * 60 * 60 * 1000;
+            return Date.now() - created < sevenDays;
+        }).length;
 
-        case "edit":
-          return state.map(cat =>
-            cat.id === action.categoria.id ? {...cat, ...action.categoria} : cat
-          );
-        case "delete":
-          return state.filter(cat => cat.id !== action.id);
-        default:
-          return state;
-      }
-    }
-  );
+        return {
+            total: categorias.length,
+            recientes,
+            editadas: categorias.filter((categoria) => categoria.updated_at && categoria.updated_at !== categoria.created_at).length,
+        };
+    }, [categorias]);
 
-  useEffect(() => {
-    const fetchCategorias = async () => {
-      try {
-        const data = await getCategorias();
-        if (data) {
-          setCategorias(data);
+    const traerCategorias = async () => {
+        setLoading(true);
+        setError("");
+
+        try {
+            const data = await getCategorias();
+            setCategorias(Array.isArray(data) ? data : []);
+        } catch (err) {
+            setError("No pude cargar las categorias. Revisa la conexion con el backend.");
+        } finally {
+            setLoading(false);
         }
-      } catch (error) {
-        console.log("Error al traer categorias: ", error);
-      }
     };
 
-    fetchCategorias();
-  }, []);
+    useEffect(() => {
+        traerCategorias();
+    }, []);
 
-  const guardarCategoria = async (datos) => {
-    const { nombre, descripcion } = datos;
+    const guardarCategoria = async (datos) => {
+        setSaving(true);
+        setError("");
 
-    const nuevaCategoria = {
-      id: crypto.randomUUID(),
-      nombre,
-      descripcion,
-      pending: true,
+        try {
+            if (datos.id) {
+                const actualizada = await updateCategoria(datos.id, datos.nombre, datos.descripcion);
+                setCategorias((prev) => prev.map((item) => (item.id === actualizada.id ? actualizada : item)));
+            } else {
+                const creada = await createCategoria(datos.nombre, datos.descripcion);
+                setCategorias((prev) => [creada, ...prev]);
+            }
+
+            setModal({ open: false, data: null });
+        } catch (err) {
+            setError(err.message || "No se pudo guardar la categoria.");
+        } finally {
+            setSaving(false);
+        }
     };
 
-    startTransition(async () => {
-      dispatchOptimista({type: "add", categoria: nuevaCategoria});
+    const eliminarCategoria = async (categoria) => {
+        const ok = window.confirm(`Quieres eliminar la categoria "${categoria.nombre}"? Sus recetas relacionadas tambien pueden eliminarse.`);
+        if (!ok) return;
 
-      try {
-        const categoriaCreada = await createCategoria(nombre, descripcion);
-        setCategorias((prev) => [...prev, categoriaCreada]);
-      } catch (error) {
-        console.log(error);
-      }
-    });
+        setSaving(true);
+        setError("");
 
-    setModal((prev) => [{ ...prev, open: false }]);
-  };
-
-  const handleEdit = (id, nombre, descripcion) => {
-    setModal({ open: true, mode: "Edit", data: { id, nombre, descripcion } });
-  };
-
-  const actualizarCategoria = async (datos) => {
-    const { id, nombre, descripcion } = datos;
-
-    startTransition(async () => {
-      dispatchOptimista({ type: "edit", categoria: {...datos, pending: true}});
-      try {
-        const categoriaActualizada = await updateCategoria(
-          id,
-          nombre,
-          descripcion,
-        );
-        setCategorias((prev) => 
-            prev.map(cat => (cat.id === id ? categoriaActualizada : cat))
-        );
-      } catch (error) {
-        console.log(error);
-      }
-    });
-
-    setModal({ open: false });
-  };
-
-  const handleDelete = async ( id ) => {
-    startTransition(async () => {
-      dispatchOptimista({ type: "delete", id});
-
-      try {
-          const data = await deleteCategoria(id);
-          console.log(data);
-          setCategorias(prev => prev.filter(cat => cat.id !== id));
-      } catch (error) {
-        console.log(error);
-      }
-  });
-  };
-
-  return (
-    <>
-      <div className="flex flex-col gap-6 items-center">
-        <h1 className="text-2xl font-bold text-center">
-          Categorías disponibles
-        </h1>
-        
-        {
-          categorias.length === 0
-          ? <Loading message="Cargando categorias" />
-          : (
-              <table className="w-full border-collapse">
-                <thead>
-                  <tr className="bg-gray-100 text-gray-700 font-semibold">
-                    <th className="p-1">Nombre</th>
-                    <th className="p-1">Descripción</th>
-                    <th className="p-1">Fecha de creación</th>
-                    <th className="p-1">Fecha de Modificación</th>
-                    <th className="p-1">Acciones</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {categoriasOptimistas.map((categoria) => (
-                    <tr
-                      key={categoria.id}
-                      style={{ color: categoria.pending ? "gray" : "black" }}
-                      className="border-b border-gray-200 text-center"
-                    >
-                      <td className="p-3">{categoria.nombre}</td>
-                      <td className="p-3">{categoria.descripcion}</td>
-                      <td className="p-3">
-                        {categoria.created_at
-                          ? new Date(categoria.created_at).toLocaleDateString(
-                              "es-AR",
-                              {
-                                day: "2-digit",
-                                month: "2-digit",
-                                year: "numeric",
-                                hour: "2-digit",
-                                minute: "2-digit",
-                              },
-                            )
-                          : "--"}
-                      </td>
-                      <td className="p-3">
-                        {categoria.updated_at
-                          ? new Date(categoria.updated_at).toLocaleDateString(
-                              "es-AR",
-                              {
-                                day: "2-digit",
-                                month: "2-digit",
-                                year: "numeric",
-                                hour: "2-digit",
-                                minute: "2-digit",
-                              },
-                            )
-                          : "--"}
-                      </td>
-                      <td>
-                        <button
-                          onClick={() =>
-                            handleEdit(
-                              categoria.id,
-                              categoria.nombre,
-                              categoria.descripcion,
-                            )
-                          }
-                          className="cursor-pointer hover:bg-gray-200 p-1 rounded"
-                        >
-                          Editar
-                        </button>
-                        <button
-                          onClick={() => handleDelete(categoria.id)}
-                          className="cursor-pointer hover:bg-gray-200 p-1 rounded"
-                        >
-                          Eliminar
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            )
+        try {
+            await deleteCategoria(categoria.id);
+            setCategorias((prev) => prev.filter((item) => item.id !== categoria.id));
+        } catch (err) {
+            setError(err.message || "No se pudo eliminar la categoria.");
+        } finally {
+            setSaving(false);
         }
-        <button
-          onClick={() => setModal({ open: true })}
-          className="p-1 rounded-2xl w-1/4 cursor-pointer bg-gray-300"
-        >
-          Nueva
-        </button>
+    };
 
-        <FormCategoria
-          isOpen={modal.open}
-          onClose={() => setModal({ open: false })}
-          onSave={
-            modal.mode === "Edit" ? actualizarCategoria : guardarCategoria
-          }
-          data={modal.data}
-        />
-      </div>
-    </>
-  );
+    return (
+        <section className="admin-crud-page">
+            <div className="admin-crud-hero">
+                <div>
+                    <span>Catalogo de recetas</span>
+                    <h1>Categorias disponibles</h1>
+                    <p>
+                        Ordena el recetario con categorias claras para que los usuarios encuentren ideas rapido.
+                    </p>
+                </div>
+
+                <button
+                    type="button"
+                    className="admin-btn admin-btn-primary"
+                    onClick={() => setModal({ open: true, data: null })}
+                    disabled={saving}
+                >
+                    Nueva categoria
+                </button>
+            </div>
+
+            <div className="admin-crud-metrics">
+                <article>
+                    <span>Total</span>
+                    <strong>{resumen.total}</strong>
+                    <small>categorias activas</small>
+                </article>
+                <article>
+                    <span>Recientes</span>
+                    <strong>{resumen.recientes}</strong>
+                    <small>creadas esta semana</small>
+                </article>
+                <article>
+                    <span>Editadas</span>
+                    <strong>{resumen.editadas}</strong>
+                    <small>con ajustes guardados</small>
+                </article>
+            </div>
+
+            {error && <div className="admin-crud-alert">{error}</div>}
+
+            <div className="admin-crud-panel">
+                <div className="admin-crud-panel-head">
+                    <div>
+                        <span>Organizacion</span>
+                        <h2>Lista de categorias</h2>
+                    </div>
+                    {saving && <small>Guardando cambios...</small>}
+                </div>
+
+                {loading ? (
+                    <Loading message="Cargando categorias" />
+                ) : categorias.length === 0 ? (
+                    <div className="admin-crud-empty">Todavia no hay categorias registradas.</div>
+                ) : (
+                    <div className="admin-table-wrap">
+                        <table className="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Categoria</th>
+                                    <th>Descripcion</th>
+                                    <th>Creacion</th>
+                                    <th>Modificacion</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {categorias.map((categoria) => (
+                                    <tr key={categoria.id}>
+                                        <td>
+                                            <div className="admin-user-cell">
+                                                <span>{categoria.nombre?.charAt(0)?.toUpperCase() || "C"}</span>
+                                                <div>
+                                                    <strong>{categoria.nombre}</strong>
+                                                    <small>#{categoria.id}</small>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td className="admin-muted-cell">{categoria.descripcion || "Sin descripcion"}</td>
+                                        <td>{formatDate(categoria.created_at)}</td>
+                                        <td>{formatDate(categoria.updated_at)}</td>
+                                        <td>
+                                            <div className="admin-actions">
+                                                <button
+                                                    type="button"
+                                                    className="admin-action-btn"
+                                                    onClick={() => setModal({ open: true, data: categoria })}
+                                                >
+                                                    Editar
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    className="admin-action-btn admin-action-danger"
+                                                    onClick={() => eliminarCategoria(categoria)}
+                                                >
+                                                    Eliminar
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                )}
+            </div>
+
+            <FormCategoria
+                isOpen={modal.open}
+                onClose={() => setModal({ open: false, data: null })}
+                onSave={guardarCategoria}
+                data={modal.data}
+            />
+        </section>
+    );
 };
 
 export default Categorias;

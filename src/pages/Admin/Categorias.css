@@ -1,0 +1,6 @@
+@import "./Usuarios.css";
+
+.admin-crud-page .admin-muted-cell {
+    max-width: 360px;
+    line-height: 1.5;
+}

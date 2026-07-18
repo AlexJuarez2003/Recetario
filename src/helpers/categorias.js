@@ -10,6 +10,7 @@ export const getCategorias = async () => {
         return data;
     } catch (error) {
         console.log(error);
+        throw error;
     }
 }
 
@@ -30,6 +31,7 @@ export const createCategoria = async (nombre, descripcion) => {
         return data;
     } catch (error) {
         console.log(error);
+        throw error;
     }
 }
 
@@ -50,6 +52,7 @@ export const updateCategoria = async (id, nombre, descripcion) => {
         return data;
     } catch (error) {
         console.log(error);
+        throw error;
     }
 }
 
@@ -69,6 +72,7 @@ export const deleteCategoria = async (id) => {
         return data;
     } catch (error) {
         console.log(error);
+        throw error;
     }
 }
 
