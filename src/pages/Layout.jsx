@@ -1,5 +1,6 @@
 import Sidebar from "../components/Sidebar";
 import Navbar from "../components/Navbar";
+import AsistenteChat from "../components/AsistenteChat";
 import { Outlet } from "react-router-dom";
 import { useRef, useState } from "react";
 import "./Layout.css";
@@ -35,6 +36,7 @@ const Layout = () => {
                     <Outlet />
                 </main>
             </div>
+            <AsistenteChat />
         </div>
     );
 }
