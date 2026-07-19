@@ -4,6 +4,7 @@ import Comentarios from "../../components/Comentarios";
 import Loading from "../../components/Loading";
 import { UserContext } from "../../context/UserProvider";
 import { getComentarios } from "../../helpers/comentarios";
+import { comprarRecetas } from "../../helpers/compras";
 import { addFavorito, getFavoritos, removeFavorito } from "../../helpers/favoritos";
 import { getRecetas } from "../../helpers/recetas";
 import "./Recetas.css";
@@ -39,7 +40,16 @@ const Recetas = () => {
     const [busqueda, setBusqueda] = useState("");
     const [loading, setLoading] = useState(true);
     const [accionFavorito, setAccionFavorito] = useState(null);
+    const [comprando, setComprando] = useState(false);
+    const [mensajeCompra, setMensajeCompra] = useState("");
     const [modal, setModal] = useState({ open: false, receta: null });
+    const [carrito, setCarrito] = useState(() => {
+        try {
+            return JSON.parse(localStorage.getItem("chefia_carrito") || "[]");
+        } catch {
+            return [];
+        }
+    });
 
     const cargarDatos = async () => {
         try {
@@ -52,6 +62,12 @@ const Recetas = () => {
             setRecetas(Array.isArray(recetasData) ? recetasData : []);
             setFavoritos(Array.isArray(favoritosData) ? favoritosData : []);
             setComentarios(Array.isArray(comentariosData) ? comentariosData : []);
+            setCarrito((prev) =>
+                prev.filter((item) => {
+                    const recetaActual = recetasData?.find((receta) => receta.id === item.id);
+                    return recetaActual?.bloqueada;
+                })
+            );
         } catch (error) {
             console.log(error);
         } finally {
@@ -62,6 +78,10 @@ const Recetas = () => {
     useEffect(() => {
         cargarDatos();
     }, []);
+
+    useEffect(() => {
+        localStorage.setItem("chefia_carrito", JSON.stringify(carrito));
+    }, [carrito]);
 
     const favoritosPorReceta = useMemo(() => {
         return favoritos.reduce((mapa, favorito) => {
@@ -140,6 +160,46 @@ const Recetas = () => {
         setComentarios((prev) => prev.filter((comentario) => comentario.id !== comentarioId));
     };
 
+    const estaEnCarrito = (recetaId) => carrito.some((receta) => receta.id === recetaId);
+
+    const toggleCarrito = (receta) => {
+        setMensajeCompra("");
+        setCarrito((prev) => {
+            if (prev.some((item) => item.id === receta.id)) {
+                return prev.filter((item) => item.id !== receta.id);
+            }
+
+            return [
+                ...prev,
+                {
+                    id: receta.id,
+                    titulo: receta.titulo,
+                    precio: receta.precio,
+                },
+            ];
+        });
+    };
+
+    const comprarCarrito = async () => {
+        if (carrito.length === 0) return;
+
+        setComprando(true);
+        setMensajeCompra("");
+
+        try {
+            await comprarRecetas(carrito.map((receta) => receta.id));
+            setCarrito([]);
+            setMensajeCompra("Compra simulada lista. Tus recetas quedaron desbloqueadas.");
+            await cargarDatos();
+        } catch (err) {
+            setMensajeCompra(err.message || "No se pudo completar la compra.");
+        } finally {
+            setComprando(false);
+        }
+    };
+
+    const totalCarrito = carrito.reduce((total, receta) => total + Number(receta.precio || 0), 0);
+
     if (loading) {
         return <Loading message="Cargando recetas" />;
     }
@@ -151,8 +211,8 @@ const Recetas = () => {
                     <span>Feed ChefIA</span>
                     <h1>Recetas de la comunidad</h1>
                     <p>
-                        Mira las publicaciones, guarda tus recetas favoritas con el corazon
-                        y abre los comentarios sin perder tu lugar en el feed.
+                        Mira publicaciones, guarda favoritas, comenta y compra recetas premium
+                        sin perder tu lugar en el feed.
                     </p>
                 </div>
 
@@ -185,6 +245,39 @@ const Recetas = () => {
                         <strong>{comentarios.length}</strong>
                         <p>mensajes en recetas</p>
                     </div>
+                    <div className="recetas-side-card recetas-cart-card">
+                        <div className="recetas-cart-head">
+                            <span>
+                                <svg viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="M6.2 6h15.1l-1.8 8.1a2.2 2.2 0 0 1-2.1 1.7H9.1a2.2 2.2 0 0 1-2.1-1.7L4.8 3.8H2.5" />
+                                    <circle cx="9.3" cy="20" r="1.2" />
+                                    <circle cx="17.4" cy="20" r="1.2" />
+                                </svg>
+                                Carrito
+                            </span>
+                            <strong>{carrito.length}</strong>
+                        </div>
+                        {carrito.length > 0 ? (
+                            <div className="recetas-cart-list">
+                                {carrito.map((item) => (
+                                    <div key={item.id}>
+                                        <p>{item.titulo}</p>
+                                        <b>${Number(item.precio || 0).toFixed(2)}</b>
+                                        <button type="button" onClick={() => toggleCarrito(item)}>
+                                            Quitar
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <p className="recetas-cart-empty">Agrega recetas premium para comprarlas juntas.</p>
+                        )}
+                        <p className="recetas-cart-total">${totalCarrito.toFixed(2)} MXN</p>
+                        <button type="button" onClick={comprarCarrito} disabled={comprando || carrito.length === 0}>
+                            {comprando ? "Procesando..." : "Pagar tarjeta demo"}
+                        </button>
+                        {mensajeCompra && <small>{mensajeCompra}</small>}
+                    </div>
                 </aside>
 
                 <div className="recetas-feed">
@@ -196,8 +289,10 @@ const Recetas = () => {
                     ) : (
                         recetasFiltradas.map((receta) => {
                             const favoritoActual = favoritoDeUsuario(receta.id);
-                            const totalFavoritos = favoritosPorReceta[receta.id] || 0;
-                            const totalComentarios = comentariosPorReceta[receta.id] || 0;
+                            const totalFavoritos = receta.favoritos_count ?? favoritosPorReceta[receta.id] ?? 0;
+                            const totalComentarios = receta.comentarios_count ?? comentariosPorReceta[receta.id] ?? 0;
+                            const bloqueada = receta.es_premium && receta.bloqueada;
+                            const comprada = receta.es_premium && receta.comprada;
 
                             return (
                                 <article key={receta.id} className="receta-post">
@@ -211,7 +306,8 @@ const Recetas = () => {
                                         </div>
 
                                         <div className="receta-post-meta">
-                                            {receta.es_premium && <span>Premium ${receta.precio}</span>}
+                                            {comprada && <span className="comprada">Comprada</span>}
+                                            {receta.es_premium && !comprada && <span>Premium ${receta.precio}</span>}
                                             <small>{receta.tiempo_preparacion || "--"} min</small>
                                         </div>
                                     </header>
@@ -219,12 +315,21 @@ const Recetas = () => {
                                     <div className="receta-post-body">
                                         <h3>{receta.titulo}</h3>
                                         <p>{receta.descripcion}</p>
-                                        <div className="receta-post-detail">
-                                            <strong>Ingredientes:</strong> {textoCorto(receta.ingredientes)}
-                                        </div>
-                                        <div className="receta-post-detail">
-                                            <strong>Pasos:</strong> {textoCorto(receta.pasos)}
-                                        </div>
+                                        {bloqueada ? (
+                                            <div className="receta-premium-lock">
+                                                <strong>Contenido premium bloqueado</strong>
+                                                <span>Compra esta receta para ver ingredientes y pasos completos.</span>
+                                            </div>
+                                        ) : (
+                                            <>
+                                                <div className="receta-post-detail">
+                                                    <strong>Ingredientes:</strong> {textoCorto(receta.ingredientes)}
+                                                </div>
+                                                <div className="receta-post-detail">
+                                                    <strong>Pasos:</strong> {textoCorto(receta.pasos)}
+                                                </div>
+                                            </>
+                                        )}
                                     </div>
 
                                     {receta.imagen && (
@@ -245,7 +350,7 @@ const Recetas = () => {
                                         </button>
                                     </div>
 
-                                    <footer className="receta-actions">
+                                    <footer className={`receta-actions ${bloqueada ? "has-cart" : ""}`}>
                                         <button
                                             type="button"
                                             className={favoritoActual ? "liked" : ""}
@@ -256,13 +361,23 @@ const Recetas = () => {
                                             {favoritoActual ? "Guardado" : "Me gusta"}
                                         </button>
                                         <button type="button" onClick={() => abrirComentarios(receta)}>
-                                            <span>◐</span>
+                                            <span>●</span>
                                             Comentar
                                         </button>
                                         <Link className="receta-detail-link" to={`/recetas/${receta.id}`}>
                                             <span>↗</span>
                                             Ver detalle
                                         </Link>
+                                        {bloqueada && (
+                                            <button
+                                                type="button"
+                                                className={estaEnCarrito(receta.id) ? "in-cart" : ""}
+                                                onClick={() => toggleCarrito(receta)}
+                                            >
+                                                <span>$</span>
+                                                {estaEnCarrito(receta.id) ? "En carrito" : "Agregar"}
+                                            </button>
+                                        )}
                                     </footer>
                                 </article>
                             );

@@ -1,7 +1,8 @@
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Loading from "../../components/Loading";
 import { UserContext } from "../../context/UserProvider";
+import { updateMe } from "../../helpers/me";
 import "./Perfil.css";
 
 const obtenerIniciales = (nombre = "Usuario") =>
@@ -17,7 +18,56 @@ const formatearRol = (role = "usuario") =>
     role === "admin" ? "Administrador" : "Usuario";
 
 const Perfil = () => {
-    const { user, loading } = useContext(UserContext);
+    const { user, setUser, loading } = useContext(UserContext);
+    const [modal, setModal] = useState(false);
+    const [saving, setSaving] = useState(false);
+    const [error, setError] = useState("");
+    const [formData, setFormData] = useState({
+        name: "",
+        email: "",
+        password: "",
+    });
+
+    useEffect(() => {
+        if (!user || !modal) return;
+
+        setFormData({
+            name: user.name || "",
+            email: user.email || "",
+            password: "",
+        });
+        setError("");
+    }, [user, modal]);
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData((prev) => ({ ...prev, [name]: value }));
+    };
+
+    const guardarPerfil = async (e) => {
+        e.preventDefault();
+        setSaving(true);
+        setError("");
+
+        try {
+            const payload = {
+                name: formData.name,
+                email: formData.email,
+            };
+
+            if (formData.password.trim()) {
+                payload.password = formData.password;
+            }
+
+            const actualizado = await updateMe(payload);
+            setUser(actualizado);
+            setModal(false);
+        } catch (err) {
+            setError(err.message || "No se pudo actualizar el perfil.");
+        } finally {
+            setSaving(false);
+        }
+    };
 
     if (loading) {
         return <Loading message="Cargando perfil" />;
@@ -43,7 +93,7 @@ const Perfil = () => {
                     <h1>Perfil de usuario</h1>
                     <p>
                         Revisa tu informacion principal dentro de ChefIA. Mas adelante aqui
-                        podremos agregar foto de perfil, recetas guardadas y edicion de datos.
+                        Actualiza tus datos, revisa tu actividad y entra rapido a tus recetas dentro de ChefIA.
                     </p>
                 </div>
 
@@ -86,7 +136,7 @@ const Perfil = () => {
                     </div>
 
                     <div className="perfil-actions">
-                        <button type="button">Editar perfil</button>
+                        <button type="button" onClick={() => setModal(true)}>Editar perfil</button>
                         <Link to="/recetas">Ver recetas</Link>
                     </div>
                 </article>
@@ -102,6 +152,64 @@ const Perfil = () => {
                     )}
                 </aside>
             </section>
+
+            {modal && (
+                <div className="perfil-modal-backdrop" onClick={() => setModal(false)}>
+                    <section className="perfil-modal" onClick={(e) => e.stopPropagation()}>
+                        <div className="perfil-modal-heading">
+                            <span>Mi informacion</span>
+                            <h2>Editar perfil</h2>
+                            <p>Cambia tu nombre, correo o contrasena. Si no quieres cambiar la contrasena, dejala vacia.</p>
+                        </div>
+
+                        <form className="perfil-form" onSubmit={guardarPerfil}>
+                            <label>
+                                <span>Nombre</span>
+                                <input
+                                    name="name"
+                                    value={formData.name}
+                                    onChange={handleChange}
+                                    required
+                                />
+                            </label>
+
+                            <label>
+                                <span>Correo electronico</span>
+                                <input
+                                    type="email"
+                                    name="email"
+                                    value={formData.email}
+                                    onChange={handleChange}
+                                    required
+                                />
+                            </label>
+
+                            <label>
+                                <span>Nueva contrasena</span>
+                                <input
+                                    type="password"
+                                    name="password"
+                                    value={formData.password}
+                                    onChange={handleChange}
+                                    minLength={6}
+                                    placeholder="Opcional"
+                                />
+                            </label>
+
+                            {error && <p className="perfil-error">{error}</p>}
+
+                            <div className="perfil-modal-actions">
+                                <button type="button" onClick={() => setModal(false)}>
+                                    Cancelar
+                                </button>
+                                <button type="submit" disabled={saving}>
+                                    {saving ? "Guardando..." : "Guardar cambios"}
+                                </button>
+                            </div>
+                        </form>
+                    </section>
+                </div>
+            )}
         </div>
     );
 };

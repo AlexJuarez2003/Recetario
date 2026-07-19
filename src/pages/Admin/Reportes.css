@@ -1,0 +1,181 @@
+.reportes-page {
+    color: #221b15;
+    font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.reportes-hero {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    border-radius: 24px;
+    background:
+        linear-gradient(135deg, rgba(31, 27, 22, 0.94), rgba(84, 103, 34, 0.72)),
+        url("/img/fondo-login.webp");
+    background-size: cover;
+    background-position: center;
+    padding: 34px;
+    box-shadow: 0 24px 56px rgba(47, 35, 23, 0.18);
+}
+
+.reportes-hero span,
+.reportes-metrics span,
+.reportes-grid span {
+    color: #b9dc55;
+    font-size: 12px;
+    font-weight: 950;
+    text-transform: uppercase;
+}
+
+.reportes-hero h1 {
+    margin: 8px 0 0;
+    color: #fff;
+    font-size: clamp(36px, 5vw, 64px);
+    line-height: 1;
+    font-weight: 950;
+}
+
+.reportes-hero p {
+    max-width: 720px;
+    margin: 14px 0 0;
+    color: rgba(255, 255, 255, 0.84);
+    font-weight: 750;
+    line-height: 1.7;
+}
+
+.reportes-hero button,
+.reportes-grid button {
+    min-height: 48px;
+    border: 0;
+    border-radius: 14px;
+    background: #a4c93a;
+    color: #221b15;
+    padding: 0 20px;
+    font: inherit;
+    font-weight: 950;
+    cursor: pointer;
+    box-shadow: 0 14px 30px rgba(108, 139, 47, 0.24);
+}
+
+.reportes-metrics {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+    margin-top: 22px;
+}
+
+.reportes-metrics article,
+.reportes-grid article,
+.reportes-alert {
+    border: 1px solid #e4d8ca;
+    border-radius: 20px;
+    background: #fff;
+    box-shadow: 0 16px 38px rgba(47, 35, 23, 0.08);
+}
+
+.reportes-metrics article {
+    padding: 22px;
+}
+
+.reportes-metrics strong {
+    display: block;
+    margin-top: 10px;
+    color: #221b15;
+    font-size: 38px;
+    line-height: 1;
+    font-weight: 950;
+}
+
+.reportes-metrics small {
+    display: block;
+    margin-top: 9px;
+    color: #756a5d;
+    font-weight: 850;
+}
+
+.reportes-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+    margin-top: 24px;
+}
+
+.reportes-grid article {
+    display: grid;
+    align-content: start;
+    gap: 12px;
+    padding: 24px;
+}
+
+.reportes-grid h2 {
+    margin: 0;
+    color: #221b15;
+    font-size: 29px;
+    line-height: 1.05;
+    font-weight: 950;
+}
+
+.reportes-grid p,
+.reportes-alert {
+    color: #756a5d;
+    line-height: 1.6;
+    font-weight: 750;
+}
+
+.reportes-grid button {
+    justify-self: start;
+    margin-top: 8px;
+    background: #221b15;
+    color: #fff;
+    box-shadow: none;
+}
+
+.reportes-alert {
+    margin-top: 22px;
+    border-color: #ffd1d1;
+    background: #fff0f0;
+    color: #9f1d1d;
+    padding: 18px;
+}
+
+@media print {
+    .app-sidebar,
+    .app-navbar,
+    .reportes-hero button,
+    .reportes-grid button {
+        display: none !important;
+    }
+
+    .app-shell,
+    .app-shell-body,
+    .app-shell-main {
+        height: auto !important;
+        overflow: visible !important;
+    }
+
+    .reportes-hero,
+    .reportes-metrics article,
+    .reportes-grid article {
+        box-shadow: none;
+    }
+}
+
+@media (max-width: 1100px) {
+    .reportes-metrics,
+    .reportes-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 720px) {
+    .reportes-hero,
+    .reportes-metrics,
+    .reportes-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .reportes-hero {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}

@@ -6,9 +6,13 @@ import Layout from "./pages/Layout";
 import Home from "./pages/Publico/Home";
 import DetalleReceta from "./pages/Usuario/DetalleReceta";
 import Recetas from "./pages/Usuario/Recetas";
+import MisRecetas from "./pages/Usuario/MisRecetas";
+import MisCompras from "./pages/Usuario/MisCompras";
 import Categorias from "./pages/Admin/Categorias";
 import Usuarios from "./pages/Admin/Usuarios";
 import Dashboard from "./pages/Admin/Dashboard";
+import Ventas from "./pages/Admin/Ventas";
+import Reportes from "./pages/Admin/Reportes";
 
 import ProtectedRoute from "./components/ProtectedRoute";
 import { UserProvider } from "./context/UserProvider";
@@ -27,6 +31,8 @@ const App = () => {
             <Route element={<Layout />}>
               <Route path="/recetas" element={<Recetas />} />
               <Route path="/recetas/:id" element={<DetalleReceta />} />
+              <Route path="/mis-recetas" element={<MisRecetas />} />
+              <Route path="/mis-compras" element={<MisCompras />} />
               <Route path="/perfil" element={<Perfil />} />
             </Route>
           </Route>
@@ -37,6 +43,8 @@ const App = () => {
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/usuarios" element={<Usuarios />} />
               <Route path="/categorias" element={<Categorias />} />
+              <Route path="/ventas" element={<Ventas />} />
+              <Route path="/reportes" element={<Reportes />} />
             </Route>
           </Route>
 

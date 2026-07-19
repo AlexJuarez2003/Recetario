@@ -126,6 +126,134 @@
     font-weight: 850;
 }
 
+.recetas-cart-card {
+    overflow: hidden;
+}
+
+.recetas-cart-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.recetas-cart-head span {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.recetas-cart-head svg {
+    width: 22px;
+    height: 22px;
+    fill: none;
+    stroke: #221b15;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 2.2;
+}
+
+.recetas-cart-head strong {
+    width: 36px;
+    height: 36px;
+    display: grid;
+    place-items: center;
+    border-radius: 999px;
+    background: #ffdf00;
+    color: #221b15;
+    font-size: 18px;
+    box-shadow: 0 8px 18px rgba(47, 35, 23, 0.12);
+}
+
+.recetas-cart-list {
+    display: grid;
+    gap: 10px;
+    margin-top: 14px;
+    border-top: 1px solid #eadfd0;
+    padding-top: 12px;
+}
+
+.recetas-cart-list > div {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 6px 10px;
+    align-items: center;
+    border: 1px solid #eadfd0;
+    border-radius: 14px;
+    background: #fffaf3;
+    padding: 10px;
+}
+
+.recetas-cart-list p {
+    margin: 0;
+    color: #221b15;
+    font-size: 13px;
+    font-weight: 900;
+    line-height: 1.35;
+}
+
+.recetas-cart-list b {
+    color: #5d771e;
+    font-size: 13px;
+    font-weight: 950;
+    white-space: nowrap;
+}
+
+.recetas-cart-list button {
+    grid-column: 1 / -1;
+    min-height: 32px;
+    margin-top: 2px;
+    border: 1px solid #e1d6c7;
+    border-radius: 10px;
+    background: #fff;
+    color: #756a5d;
+    font: inherit;
+    font-size: 12px;
+    font-weight: 900;
+    cursor: pointer;
+}
+
+.recetas-cart-empty {
+    margin-top: 14px;
+}
+
+.recetas-cart-total {
+    border-top: 1px solid #eadfd0;
+    margin-top: 14px;
+    padding-top: 14px;
+    color: #221b15 !important;
+    font-size: 19px !important;
+    font-weight: 950 !important;
+}
+
+.recetas-cart-card > button {
+    width: 100%;
+    min-height: 40px;
+    margin-top: 12px;
+    border: 0;
+    border-radius: 12px;
+    background: #221b15;
+    color: #fff;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 950;
+    cursor: pointer;
+}
+
+.recetas-cart-card > button:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+}
+
+.recetas-cart-card small {
+    display: block;
+    margin-top: 10px;
+    color: #5d771e;
+    font-size: 12px;
+    font-weight: 850;
+    line-height: 1.45;
+}
+
 .recetas-feed {
     display: grid;
     gap: 18px;
@@ -203,6 +331,11 @@
     font-weight: 950;
 }
 
+.receta-post-meta span.comprada {
+    background: #eef7d5;
+    color: #547018;
+}
+
 .receta-post-body {
     padding: 8px 18px 16px;
 }
@@ -233,6 +366,27 @@
 .receta-post-detail strong {
     color: #221b15;
     font-weight: 950;
+}
+
+.receta-premium-lock {
+    display: grid;
+    gap: 5px;
+    margin-top: 14px;
+    border: 1px solid #ffe2a5;
+    border-radius: 16px;
+    background: #fff7df;
+    padding: 14px 16px;
+}
+
+.receta-premium-lock strong {
+    color: #9a6900;
+    font-weight: 950;
+}
+
+.receta-premium-lock span {
+    color: #756a5d;
+    font-weight: 750;
+    line-height: 1.45;
 }
 
 .receta-image-button {
@@ -297,6 +451,10 @@
     padding: 8px;
 }
 
+.receta-actions.has-cart {
+    grid-template-columns: repeat(4, 1fr);
+}
+
 .receta-actions button,
 .receta-detail-link {
     min-height: 44px;
@@ -322,6 +480,11 @@
 
 .receta-actions button.liked {
     color: #c93636;
+}
+
+.receta-actions button.in-cart {
+    background: #eef7d5;
+    color: #547018;
 }
 
 .receta-actions button span,

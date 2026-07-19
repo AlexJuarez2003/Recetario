@@ -54,15 +54,14 @@ const DetalleReceta = () => {
         setLoading(true);
         setError(null);
 
-        const data = await getReceta(id);
-
-        if (!data) {
-            setError("No se pudo cargar la receta.");
-        } else {
+        try {
+            const data = await getReceta(id);
             setReceta(data);
+        } catch (err) {
+            setError(err.message || "No se pudo cargar la receta.");
+        } finally {
+            setLoading(false);
         }
-
-        setLoading(false);
     };
 
     useEffect(() => {
@@ -75,9 +74,22 @@ const DetalleReceta = () => {
 
         try {
             await comprarReceta(receta.id);
+            try {
+                const carrito = JSON.parse(localStorage.getItem("chefia_carrito") || "[]");
+                localStorage.setItem(
+                    "chefia_carrito",
+                    JSON.stringify(carrito.filter((item) => item.id !== receta.id))
+                );
+            } catch {
+                localStorage.setItem("chefia_carrito", "[]");
+            }
             await cargarReceta();
         } catch (err) {
-            setErrorCompra(err.message);
+            if (err.message?.toLowerCase().includes("ya has comprado")) {
+                await cargarReceta();
+            } else {
+                setErrorCompra(err.message);
+            }
         } finally {
             setComprando(false);
         }
@@ -161,6 +173,13 @@ const DetalleReceta = () => {
                 </section>
             )}
 
+            {receta.comprada && (
+                <section className="detalle-owned">
+                    <span>Receta comprada</span>
+                    <h2>Esta receta premium ya esta desbloqueada para tu cuenta.</h2>
+                </section>
+            )}
+
             {receta.bloqueada ? (
                 <section className="detalle-locked">
                     <span>Receta premium</span>
@@ -170,7 +189,7 @@ const DetalleReceta = () => {
                         Al comprarla se desbloquea para tu cuenta.
                     </p>
                     <button type="button" onClick={handleComprar} disabled={comprando}>
-                        {comprando ? "Comprando..." : `Comprar por ${formatearDinero(receta.precio)}`}
+                        {comprando ? "Procesando tarjeta demo..." : `Comprar con tarjeta demo por ${formatearDinero(receta.precio)}`}
                     </button>
                     {errorCompra && <p className="detalle-inline-error">{errorCompra}</p>}
                 </section>

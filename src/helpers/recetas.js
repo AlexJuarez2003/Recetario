@@ -1,8 +1,12 @@
 export const getRecetas = async () => {
     try {
+        const token = localStorage.getItem("token");
         const response = await fetch(`${import.meta.env.VITE_API_URL}/api/recetas`, {
             method: 'GET',
-            headers: { 'Content-Type': 'application/json' }
+            headers: {
+                ...(token ? { Authorization: `Bearer ${token}` } : {}),
+                'Content-Type': 'application/json'
+            }
         });
 
         const data = await response.json();
@@ -10,6 +14,7 @@ export const getRecetas = async () => {
         return data;
     } catch (error) {
         console.log(error);
+        throw error;
     }
 }
 
@@ -29,6 +34,7 @@ export const getReceta = async (id) => {
         return data;
     } catch (error) {
         console.log(error);
+        throw error;
     }
 }
 

@@ -26,6 +26,15 @@ const mezclarArray = (arr) => {
     return copia;
 };
 
+const ordenarDestacadas = (recetas) => {
+    const conPopularidad = [...recetas].sort((a, b) =>
+        Number(b.favoritos_count || 0) - Number(a.favoritos_count || 0)
+    );
+
+    const tienePopularidad = conPopularidad.some((receta) => Number(receta.favoritos_count || 0) > 0);
+    return tienePopularidad ? conPopularidad : mezclarArray(recetas);
+};
+
 const normalizar = (texto = "") => texto.toString().toLowerCase().trim();
 
 const obtenerIniciales = (nombre = "Usuario") =>
@@ -52,21 +61,20 @@ const Home = () => {
         if (userLoading || user) return;
 
         const cargarDatos = async () => {
-            const [recetasData, categoriasData] = await Promise.all([
-                getRecetas(),
-                getCategorias(),
-            ]);
+            try {
+                const [recetasData, categoriasData] = await Promise.all([
+                    getRecetas(),
+                    getCategorias(),
+                ]);
 
-            if (!recetasData) {
+                setTodasLasRecetas(recetasData);
+                setRecetasAleatorias(ordenarDestacadas(recetasData).slice(0, NUM_RECETAS_HOME));
+                setCategorias(Array.isArray(categoriasData) ? categoriasData : []);
+            } catch (err) {
                 setError("No se pudieron cargar las recetas.");
+            } finally {
                 setLoading(false);
-                return;
             }
-
-            setTodasLasRecetas(recetasData);
-            setRecetasAleatorias(mezclarArray(recetasData).slice(0, NUM_RECETAS_HOME));
-            setCategorias(Array.isArray(categoriasData) ? categoriasData : []);
-            setLoading(false);
         };
 
         cargarDatos();
@@ -298,6 +306,7 @@ const Home = () => {
                                         <p>{receta.descripcion || "Receta lista para descubrir."}</p>
                                         <div>
                                             <span>{receta.tiempo_preparacion || "--"} min</span>
+                                            <span>{receta.favoritos_count || 0} me gusta</span>
                                             <strong>Ver receta</strong>
                                         </div>
                                     </div>

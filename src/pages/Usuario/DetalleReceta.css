@@ -181,6 +181,7 @@
 
 .detalle-panel,
 .detalle-locked,
+.detalle-owned,
 .detalle-comments-panel,
 .detalle-error {
     border: 1px solid #e4d8ca;
@@ -192,6 +193,7 @@
 
 .detalle-panel h2,
 .detalle-locked h2,
+.detalle-owned h2,
 .detalle-section-heading h2,
 .detalle-error h1 {
     margin: 8px 0 0;
@@ -249,6 +251,23 @@
 
 .detalle-locked {
     margin-top: 24px;
+}
+
+.detalle-owned {
+    margin-top: 24px;
+    border-color: #cfe39a;
+    background: #f5fbdf;
+}
+
+.detalle-owned span {
+    color: #5d771e;
+    font-size: 12px;
+    font-weight: 950;
+    text-transform: uppercase;
+}
+
+.detalle-owned h2 {
+    font-size: 26px;
 }
 
 .detalle-locked p,

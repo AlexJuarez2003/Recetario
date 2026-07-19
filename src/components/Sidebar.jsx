@@ -37,6 +37,18 @@ const Sidebar = () => {
                     </NavLink>
                 </li>
 
+                <li>
+                    <NavLink to="/mis-recetas" className={linkClass}>
+                        Tus recetas
+                    </NavLink>
+                </li>
+
+                <li>
+                    <NavLink to="/mis-compras" className={linkClass}>
+                        Tus compras
+                    </NavLink>
+                </li>
+
                 {esAdmin && (
                     <>
                         <li>
@@ -47,6 +59,16 @@ const Sidebar = () => {
                         <li>
                             <NavLink to="/usuarios" className={linkClass}>
                                 Usuarios
+                            </NavLink>
+                        </li>
+                        <li>
+                            <NavLink to="/ventas" className={linkClass}>
+                                Ventas
+                            </NavLink>
+                        </li>
+                        <li>
+                            <NavLink to="/reportes" className={linkClass}>
+                                Reportes
                             </NavLink>
                         </li>
                     </>

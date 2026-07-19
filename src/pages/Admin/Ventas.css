@@ -1,0 +1,72 @@
+@import "./Usuarios.css";
+
+.ventas-grid {
+    display: grid;
+    grid-template-columns: 0.9fr 1.4fr;
+    gap: 22px;
+    margin-top: 22px;
+}
+
+.ventas-ranking {
+    display: grid;
+    gap: 12px;
+    padding: 22px;
+}
+
+.ventas-ranking > div {
+    display: grid;
+    grid-template-columns: 42px minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 14px;
+    border: 1px solid #eadfd0;
+    border-radius: 16px;
+    background: #fbf7f0;
+    padding: 14px;
+}
+
+.ventas-ranking > div > span {
+    width: 40px;
+    height: 40px;
+    display: grid;
+    place-items: center;
+    border-radius: 13px;
+    background: #221b15;
+    color: #fff;
+    font-weight: 950;
+}
+
+.ventas-ranking strong {
+    display: block;
+    color: #221b15;
+    font-weight: 950;
+}
+
+.ventas-ranking small {
+    display: block;
+    margin-top: 4px;
+    color: #756a5d;
+    font-weight: 800;
+}
+
+.ventas-ranking b {
+    color: #5d771e;
+    font-size: 17px;
+    font-weight: 950;
+    white-space: nowrap;
+}
+
+.ventas-table-panel {
+    overflow: hidden;
+}
+
+@media (max-width: 1100px) {
+    .ventas-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 620px) {
+    .ventas-ranking > div {
+        grid-template-columns: 1fr;
+    }
+}
