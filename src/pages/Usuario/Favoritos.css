@@ -1,0 +1,254 @@
+.favoritos-page {
+    color: #221b15;
+}
+
+.favoritos-hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 260px;
+    gap: 22px;
+    align-items: stretch;
+    border-radius: 24px;
+    background:
+        linear-gradient(135deg, rgba(31, 27, 22, 0.9), rgba(90, 70, 38, 0.74)),
+        url("/img/fondo-login.webp");
+    background-size: cover;
+    background-position: center;
+    padding: 32px;
+    color: #fff;
+    box-shadow: 0 24px 56px rgba(47, 35, 23, 0.18);
+}
+
+.favoritos-hero span,
+.favoritos-empty span,
+.favoritos-count small {
+    color: #b9dc55;
+    font-size: 12px;
+    font-weight: 950;
+    letter-spacing: 0;
+    text-transform: uppercase;
+}
+
+.favoritos-hero h1 {
+    margin: 8px 0 0;
+    font-size: clamp(34px, 4vw, 58px);
+    line-height: 1;
+    font-weight: 950;
+}
+
+.favoritos-hero p {
+    max-width: 640px;
+    margin: 14px 0 0;
+    color: rgba(255, 255, 255, 0.84);
+    font-size: 16px;
+    line-height: 1.65;
+    font-weight: 750;
+}
+
+.favoritos-count {
+    display: grid;
+    align-content: center;
+    border: 1px solid rgba(255, 255, 255, 0.34);
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.92);
+    color: #221b15;
+    padding: 24px;
+}
+
+.favoritos-count strong {
+    display: block;
+    margin-top: 8px;
+    font-size: 48px;
+    line-height: 1;
+    font-weight: 950;
+}
+
+.favoritos-count p {
+    margin: 8px 0 0;
+    color: #756a5d;
+    font-size: 13px;
+    font-weight: 850;
+}
+
+.favoritos-alert,
+.favoritos-empty,
+.favorito-card {
+    border: 1px solid #e4d8ca;
+    border-radius: 18px;
+    background: #fff;
+    box-shadow: 0 14px 34px rgba(47, 35, 23, 0.08);
+}
+
+.favoritos-alert {
+    margin-top: 18px;
+    padding: 16px;
+    color: #9a2b2b;
+    font-weight: 900;
+}
+
+.favoritos-empty {
+    margin-top: 22px;
+    padding: 28px;
+}
+
+.favoritos-empty h2 {
+    margin: 8px 0 0;
+    font-size: 32px;
+    font-weight: 950;
+}
+
+.favoritos-empty p {
+    margin: 8px 0 0;
+    color: #756a5d;
+    font-weight: 750;
+}
+
+.favoritos-empty a {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    margin-top: 18px;
+    border-radius: 12px;
+    background: #221b15;
+    color: #fff;
+    padding: 0 18px;
+    font-weight: 950;
+    text-decoration: none;
+}
+
+.favoritos-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+    margin-top: 22px;
+}
+
+.favorito-card {
+    overflow: hidden;
+}
+
+.favorito-card img {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    display: block;
+    object-fit: cover;
+}
+
+.favorito-card > div {
+    padding: 18px;
+}
+
+.favorito-card small {
+    color: #77912f;
+    font-size: 12px;
+    font-weight: 950;
+    text-transform: uppercase;
+}
+
+.favorito-card h2 {
+    margin: 8px 0 0;
+    color: #221b15;
+    font-size: 24px;
+    line-height: 1.12;
+    font-weight: 950;
+}
+
+.favorito-card p {
+    min-height: 48px;
+    margin: 10px 0 0;
+    color: #62584c;
+    line-height: 1.55;
+    font-weight: 700;
+}
+
+.favorito-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 14px;
+}
+
+.favorito-stats span {
+    border-radius: 999px;
+    background: #f6efe4;
+    color: #756a5d;
+    padding: 7px 10px;
+    font-size: 12px;
+    font-weight: 900;
+}
+
+.favorito-card footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 18px;
+}
+
+.favorito-card a,
+.favorito-card button {
+    min-height: 42px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    padding: 0 16px;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 950;
+    cursor: pointer;
+}
+
+.favorito-card a {
+    background: #221b15;
+    color: #fff;
+    text-decoration: none;
+}
+
+.favorito-card button {
+    border: 1px solid #e1d6c7;
+    background: #fff;
+    color: #756a5d;
+}
+
+.favorito-card button:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+@media (max-width: 820px) {
+    .favoritos-hero,
+    .favoritos-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 620px) {
+    .favoritos-hero {
+        border-radius: 18px;
+        padding: 22px;
+    }
+
+    .favoritos-hero h1 {
+        font-size: 34px;
+    }
+
+    .favoritos-count {
+        padding: 18px;
+    }
+
+    .favoritos-grid {
+        gap: 14px;
+    }
+
+    .favorito-card {
+        border-radius: 16px;
+    }
+
+    .favorito-card > div {
+        padding: 14px;
+    }
+
+    .favorito-card h2 {
+        font-size: 22px;
+    }
+}

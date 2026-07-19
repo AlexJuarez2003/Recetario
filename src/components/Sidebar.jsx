@@ -44,6 +44,12 @@ const Sidebar = () => {
                 </li>
 
                 <li>
+                    <NavLink to="/favoritos" className={linkClass}>
+                        Me encanta
+                    </NavLink>
+                </li>
+
+                <li>
                     <NavLink to="/mis-compras" className={linkClass}>
                         Tus compras
                     </NavLink>

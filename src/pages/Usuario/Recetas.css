@@ -82,6 +82,32 @@
     box-shadow: 0 0 0 4px rgba(125, 157, 53, 0.16);
 }
 
+.recetas-filter-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    margin-top: 12px;
+}
+
+.recetas-filter-grid select {
+    width: 100%;
+    min-height: 42px;
+    border: 1px solid #d9cdbd;
+    border-radius: 12px;
+    background: #fffaf3;
+    color: #3c332b;
+    padding: 0 12px;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 850;
+    outline: none;
+}
+
+.recetas-filter-grid select:focus {
+    border-color: #7d9d35;
+    box-shadow: 0 0 0 4px rgba(125, 157, 53, 0.14);
+}
+
 .recetas-feed-layout {
     display: grid;
     grid-template-columns: 220px minmax(0, 760px) 220px;
@@ -531,6 +557,7 @@
 @media (max-width: 820px) {
     .recetas-hero {
         grid-template-columns: 1fr;
+        gap: 14px;
     }
 
     .recetas-feed-side {
@@ -539,20 +566,142 @@
 }
 
 @media (max-width: 620px) {
+    .recetas-page {
+        margin: 0 -2px;
+    }
+
     .recetas-hero {
         border-radius: 16px;
-        padding: 20px;
+        padding: 18px;
+    }
+
+    .recetas-hero h1 {
+        font-size: 32px;
+    }
+
+    .recetas-hero p {
+        display: none;
+    }
+
+    .recetas-search-card {
+        border-radius: 16px;
+        padding: 14px;
+    }
+
+    .recetas-search-card input {
+        min-height: 46px;
+        margin-top: 8px;
+    }
+
+    .recetas-filter-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+    }
+
+    .recetas-filter-grid select {
+        min-height: 40px;
+        border-radius: 11px;
+        padding: 0 8px;
+        font-size: 12px;
+    }
+
+    .recetas-feed-layout {
+        grid-template-columns: 1fr;
+        gap: 12px;
+        margin-top: 14px;
+    }
+
+    .recetas-feed-side {
+        display: block;
+    }
+
+    .recetas-feed-side .recetas-side-card:not(.recetas-cart-card) {
+        display: none;
+    }
+
+    .recetas-cart-card {
+        border-radius: 16px;
+        padding: 14px;
+    }
+
+    .recetas-cart-list {
+        max-height: 150px;
+        overflow-y: auto;
+    }
+
+    .recetas-feed {
+        gap: 14px;
     }
 
     .receta-post-header {
-        flex-direction: column;
+        gap: 10px;
+        padding: 12px 12px 8px;
+    }
+
+    .receta-author > span {
+        width: 42px;
+        height: 42px;
+        font-size: 14px;
+    }
+
+    .receta-author h2 {
+        font-size: 18px;
+    }
+
+    .receta-author p {
+        font-size: 12px;
     }
 
     .receta-post-meta {
         justify-items: start;
+        gap: 4px;
+        font-size: 12px;
+    }
+
+    .receta-post-body {
+        padding: 6px 12px 12px;
+    }
+
+    .receta-post-body h3 {
+        font-size: 25px;
+    }
+
+    .receta-post-body p,
+    .receta-post-detail {
+        font-size: 14px;
+        line-height: 1.48;
+    }
+
+    .receta-image-button img {
+        max-height: none;
+        aspect-ratio: 4 / 3;
+    }
+
+    .receta-social-summary {
+        padding: 9px 12px;
+        font-size: 13px;
     }
 
     .receta-actions {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 4px;
+        padding: 6px;
+    }
+
+    .receta-actions.has-cart {
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    .receta-actions button,
+    .receta-detail-link {
+        min-height: 40px;
+        gap: 5px;
+        border-radius: 10px;
+        font-size: 12px;
+    }
+
+    .receta-actions button span,
+    .receta-detail-link span {
+        font-size: 16px;
     }
 }

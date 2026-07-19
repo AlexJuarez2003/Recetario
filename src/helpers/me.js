@@ -37,7 +37,8 @@ export const updateMe = async (payload) => {
   const data = await response.json();
 
   if (!response.ok) {
-    throw new Error(data.message || "No se pudo actualizar el perfil");
+    const primerError = data.errors ? Object.values(data.errors).flat()[0] : null;
+    throw new Error(primerError || data.message || "No se pudo actualizar el perfil");
   }
 
   return data;

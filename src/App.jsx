@@ -8,6 +8,7 @@ import DetalleReceta from "./pages/Usuario/DetalleReceta";
 import Recetas from "./pages/Usuario/Recetas";
 import MisRecetas from "./pages/Usuario/MisRecetas";
 import MisCompras from "./pages/Usuario/MisCompras";
+import Favoritos from "./pages/Usuario/Favoritos";
 import Categorias from "./pages/Admin/Categorias";
 import Usuarios from "./pages/Admin/Usuarios";
 import Dashboard from "./pages/Admin/Dashboard";
@@ -33,6 +34,7 @@ const App = () => {
               <Route path="/recetas/:id" element={<DetalleReceta />} />
               <Route path="/mis-recetas" element={<MisRecetas />} />
               <Route path="/mis-compras" element={<MisCompras />} />
+              <Route path="/favoritos" element={<Favoritos />} />
               <Route path="/perfil" element={<Perfil />} />
             </Route>
           </Route>

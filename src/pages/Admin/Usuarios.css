@@ -49,7 +49,7 @@
 
 .admin-crud-metrics {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 16px;
     margin-top: 22px;
 }
@@ -118,7 +118,7 @@
 
 .admin-table {
     width: 100%;
-    min-width: 820px;
+    min-width: 980px;
     border-collapse: collapse;
 }
 
@@ -200,9 +200,30 @@
     color: #547018;
 }
 
+.admin-pill-active {
+    background: #eef7d5;
+    color: #547018;
+}
+
+.admin-pill-suspended {
+    background: #fff0c2;
+    color: #9a6900;
+}
+
+.admin-status-note {
+    display: block;
+    max-width: 190px;
+    margin-top: 7px;
+    color: #756a5d;
+    font-size: 12px;
+    font-weight: 750;
+    line-height: 1.35;
+}
+
 .admin-actions {
     display: flex;
     align-items: center;
+    flex-wrap: wrap;
     gap: 8px;
 }
 
@@ -263,6 +284,12 @@
     border-color: #cfe39a;
     background: #eef7d5;
     color: #547018;
+}
+
+.admin-action-warn:hover {
+    border-color: #ffe1a1;
+    background: #fff7df;
+    color: #9a6900;
 }
 
 .admin-action-danger:hover {
@@ -384,7 +411,7 @@
     }
 
     .admin-crud-metrics {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
     .admin-btn-primary {
@@ -407,5 +434,9 @@
 
     .admin-modal-actions .admin-btn {
         width: 100%;
+    }
+
+    .admin-crud-metrics {
+        grid-template-columns: 1fr;
     }
 }

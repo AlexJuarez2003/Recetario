@@ -38,6 +38,10 @@ const Recetas = () => {
     const [favoritos, setFavoritos] = useState([]);
     const [comentarios, setComentarios] = useState([]);
     const [busqueda, setBusqueda] = useState("");
+    const [categoriaFiltro, setCategoriaFiltro] = useState("todas");
+    const [tiempoFiltro, setTiempoFiltro] = useState("todos");
+    const [tipoFiltro, setTipoFiltro] = useState("todas");
+    const [ordenFiltro, setOrdenFiltro] = useState("recientes");
     const [loading, setLoading] = useState(true);
     const [accionFavorito, setAccionFavorito] = useState(null);
     const [comprando, setComprando] = useState(false);
@@ -97,17 +101,68 @@ const Recetas = () => {
         }, {});
     }, [comentarios]);
 
+    const categoriasDisponibles = useMemo(() => {
+        const nombres = recetas
+            .map((receta) => receta.categoria?.nombre)
+            .filter(Boolean);
+
+        return [...new Set(nombres)].sort((a, b) => a.localeCompare(b));
+    }, [recetas]);
+
     const recetasFiltradas = useMemo(() => {
         const filtro = busqueda.trim().toLowerCase();
-        if (!filtro) return recetas;
 
-        return recetas.filter((receta) =>
-            receta.titulo?.toLowerCase().includes(filtro)
-            || receta.descripcion?.toLowerCase().includes(filtro)
-            || receta.categoria?.nombre?.toLowerCase().includes(filtro)
-            || receta.usuario?.name?.toLowerCase().includes(filtro)
-        );
-    }, [busqueda, recetas]);
+        const filtradas = recetas.filter((receta) => {
+            const coincideTexto = !filtro
+                || receta.titulo?.toLowerCase().includes(filtro)
+                || receta.descripcion?.toLowerCase().includes(filtro)
+                || receta.categoria?.nombre?.toLowerCase().includes(filtro)
+                || receta.usuario?.name?.toLowerCase().includes(filtro);
+
+            const coincideCategoria = categoriaFiltro === "todas"
+                || receta.categoria?.nombre === categoriaFiltro;
+
+            const minutos = Number(receta.tiempo_preparacion || 0);
+            const coincideTiempo = tiempoFiltro === "todos"
+                || (tiempoFiltro === "rapidas" && minutos <= 20)
+                || (tiempoFiltro === "medias" && minutos > 20 && minutos <= 45)
+                || (tiempoFiltro === "largas" && minutos > 45);
+
+            const coincideTipo = tipoFiltro === "todas"
+                || (tipoFiltro === "gratis" && !receta.es_premium)
+                || (tipoFiltro === "premium" && receta.es_premium)
+                || (tipoFiltro === "compradas" && receta.comprada);
+
+            return coincideTexto && coincideCategoria && coincideTiempo && coincideTipo;
+        });
+
+        return [...filtradas].sort((a, b) => {
+            if (ordenFiltro === "populares") {
+                return Number(b.favoritos_count || favoritosPorReceta[b.id] || 0)
+                    - Number(a.favoritos_count || favoritosPorReceta[a.id] || 0);
+            }
+
+            if (ordenFiltro === "comentadas") {
+                return Number(b.comentarios_count || comentariosPorReceta[b.id] || 0)
+                    - Number(a.comentarios_count || comentariosPorReceta[a.id] || 0);
+            }
+
+            if (ordenFiltro === "tiempo") {
+                return Number(a.tiempo_preparacion || 0) - Number(b.tiempo_preparacion || 0);
+            }
+
+            return new Date(b.updated_at) - new Date(a.updated_at);
+        });
+    }, [
+        busqueda,
+        categoriaFiltro,
+        comentariosPorReceta,
+        favoritosPorReceta,
+        ordenFiltro,
+        recetas,
+        tiempoFiltro,
+        tipoFiltro,
+    ]);
 
     const favoritoDeUsuario = (recetaId) =>
         favoritos.find((favorito) =>
@@ -225,6 +280,32 @@ const Recetas = () => {
                         onChange={(e) => setBusqueda(e.target.value)}
                         placeholder="Nombre, categoria o autor..."
                     />
+                    <div className="recetas-filter-grid">
+                        <select value={categoriaFiltro} onChange={(e) => setCategoriaFiltro(e.target.value)}>
+                            <option value="todas">Todas las categorias</option>
+                            {categoriasDisponibles.map((categoria) => (
+                                <option key={categoria} value={categoria}>{categoria}</option>
+                            ))}
+                        </select>
+                        <select value={tiempoFiltro} onChange={(e) => setTiempoFiltro(e.target.value)}>
+                            <option value="todos">Cualquier tiempo</option>
+                            <option value="rapidas">Rapidas: 20 min o menos</option>
+                            <option value="medias">Medias: 21 a 45 min</option>
+                            <option value="largas">Largas: mas de 45 min</option>
+                        </select>
+                        <select value={tipoFiltro} onChange={(e) => setTipoFiltro(e.target.value)}>
+                            <option value="todas">Gratis y premium</option>
+                            <option value="gratis">Solo gratis</option>
+                            <option value="premium">Solo premium</option>
+                            <option value="compradas">Compradas</option>
+                        </select>
+                        <select value={ordenFiltro} onChange={(e) => setOrdenFiltro(e.target.value)}>
+                            <option value="recientes">Mas recientes</option>
+                            <option value="populares">Mas guardadas</option>
+                            <option value="comentadas">Mas comentadas</option>
+                            <option value="tiempo">Menor tiempo</option>
+                        </select>
+                    </div>
                 </div>
             </section>
 
@@ -301,7 +382,7 @@ const Recetas = () => {
                                             <span>{iniciales(receta.usuario?.name)}</span>
                                             <div>
                                                 <h2>{receta.usuario?.name || "Usuario"}</h2>
-                                                <p>{formatearFecha(receta.updated_at)} · {receta.categoria?.nombre || "Sin categoria"}</p>
+                                                <p>{formatearFecha(receta.updated_at)} - {receta.categoria?.nombre || "Sin categoria"}</p>
                                             </div>
                                         </div>
 

@@ -25,7 +25,9 @@ const Perfil = () => {
     const [formData, setFormData] = useState({
         name: "",
         email: "",
+        current_password: "",
         password: "",
+        password_confirmation: "",
     });
 
     useEffect(() => {
@@ -34,7 +36,9 @@ const Perfil = () => {
         setFormData({
             name: user.name || "",
             email: user.email || "",
+            current_password: "",
             password: "",
+            password_confirmation: "",
         });
         setError("");
     }, [user, modal]);
@@ -56,7 +60,21 @@ const Perfil = () => {
             };
 
             if (formData.password.trim()) {
+                if (!formData.current_password.trim()) {
+                    setError("Para cambiar tu contrasena debes escribir tu contrasena actual.");
+                    setSaving(false);
+                    return;
+                }
+
+                if (formData.password !== formData.password_confirmation) {
+                    setError("La nueva contrasena y la confirmacion no coinciden.");
+                    setSaving(false);
+                    return;
+                }
+
+                payload.current_password = formData.current_password;
                 payload.password = formData.password;
+                payload.password_confirmation = formData.password_confirmation;
             }
 
             const actualizado = await updateMe(payload);
@@ -159,7 +177,7 @@ const Perfil = () => {
                         <div className="perfil-modal-heading">
                             <span>Mi informacion</span>
                             <h2>Editar perfil</h2>
-                            <p>Cambia tu nombre, correo o contrasena. Si no quieres cambiar la contrasena, dejala vacia.</p>
+                            <p>Cambia tu nombre, correo o contrasena. Para cambiar la contrasena debes confirmar la actual.</p>
                         </div>
 
                         <form className="perfil-form" onSubmit={guardarPerfil}>
@@ -185,6 +203,17 @@ const Perfil = () => {
                             </label>
 
                             <label>
+                                <span>Contrasena actual</span>
+                                <input
+                                    type="password"
+                                    name="current_password"
+                                    value={formData.current_password}
+                                    onChange={handleChange}
+                                    placeholder="Solo si cambiaras la contrasena"
+                                />
+                            </label>
+
+                            <label>
                                 <span>Nueva contrasena</span>
                                 <input
                                     type="password"
@@ -193,6 +222,18 @@ const Perfil = () => {
                                     onChange={handleChange}
                                     minLength={6}
                                     placeholder="Opcional"
+                                />
+                            </label>
+
+                            <label>
+                                <span>Repetir nueva contrasena</span>
+                                <input
+                                    type="password"
+                                    name="password_confirmation"
+                                    value={formData.password_confirmation}
+                                    onChange={handleChange}
+                                    minLength={6}
+                                    placeholder="Confirma la nueva contrasena"
                                 />
                             </label>
 
